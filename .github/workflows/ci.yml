@@ -8,6 +8,14 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Run my own conatiner action
+              id: my-action
               uses: ./
               with:
                   who-to-greet: 'Mona the Octocat'
+            - name: Output the parameter
+              run: echo "The answer is ${{ steps.my-action.outputs.answer }}"
+            - name: Test the container
+              if: ${{ steps.my-action.outputs.answer != 42 }}
+              run: |
+                echo "::error file=entrypoint.sh,line=4,title=Error in container::The answer is not 42"
+                exit 1
